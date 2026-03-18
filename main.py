@@ -1,8 +1,28 @@
+import os
+from importlib import import_module
+
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 
 load_dotenv()
+
+
+def get_llm():
+    provider = os.getenv("LLM_PROVIDER", "openai").strip().lower()
+
+    if provider == "ollama":
+        model = os.environ.get("OLLAMA_MODEL")
+        base_url = os.environ.get("OLLAMA_BASE_URL")
+        if not model:
+            raise ValueError("OLLAMA_MODEL environment variable is required when LLM_PROVIDER=ollama")
+        if not base_url:
+            raise ValueError("OLLAMA_BASE_URL environment variable is required when LLM_PROVIDER=ollama")
+        return ChatOllama(model=model, base_url=base_url, temperature=0)
+
+    model = os.getenv("OPENAI_MODEL", "gpt-5")
+    return ChatOpenAI(model=model, temperature=0)
 
 
 def main():
@@ -28,7 +48,7 @@ Musk was the largest donor in the 2024 U.S. presidential election, where he supp
         template=summary_template,
     )
 
-    llm = ChatOpenAI(model="gpt-5", temperature=0)
+    llm = get_llm()
 
     chain = summary_prompt_template | llm
     response = chain.invoke(input={"information": information})
