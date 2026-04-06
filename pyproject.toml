@@ -1,0 +1,15 @@
+[project]
+name = "langchain-course"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "black>=26.3.1",
+    "grandalf>=0.8",
+    "isort>=8.0.1",
+    "langchain>=1.2.15",
+    "langchain-openai>=1.1.12",
+    "langgraph>=1.1.6",
+    "python-dotenv>=1.2.2",
+]
